@@ -52,10 +52,10 @@ class DecisionTree:
         for line in attribute_values:
             data = {}
             for i, attribute in enumerate(attributes): 
-                data[attribute] = line[i];
+                data[attribute] = line[i]
 
             datajson.append(data)
-        print(datajson)
+
         return attributes, label, datajson
 
     def build(self):
@@ -73,9 +73,13 @@ class DecisionTree:
         if setEntropy == 0:
             return None
         
+        print(setEntropy)
         bestAttribute = self.findHighestInformationGain(node.data, setEntropy)
+        print(bestAttribute)
+
+        attributeIndex = self.attributes.index(bestAttribute)
         
-        #dataEntropy = self.currentTreeEntropy(node.data)
+
         return None
 
 
@@ -99,15 +103,21 @@ class DecisionTree:
 
 
     def findHighestInformationGain(self, currentData, currentEntropy):
-        for currAttr in self.attributes:
+        maxGain = -1
+        bestAttr =  None
+        for currAttr in self.attributes[:-1]:
             attrEntropy = self.findAttributeEntropy(currentData, currAttr)
+            if currentEntropy - attrEntropy > maxGain:
+                maxGain = currentEntropy - attrEntropy
+                bestAttr = currAttr
 
+        return bestAttr
 
     def findAttributeEntropy(self, currentData, currAttr):
         attributePositiveValueMap = {}
         attributeNegativeValueMap = {}
         for line in currentData:
-            if ([line[self.label]] == 'Yes'):
+            if (line[self.label] == 'Yes'):
                 if line[currAttr] in attributePositiveValueMap:
                     attributePositiveValueMap[line[currAttr]] = attributePositiveValueMap[line[currAttr]] + 1
                 else:
@@ -117,7 +127,18 @@ class DecisionTree:
                     attributeNegativeValueMap[line[currAttr]] = attributeNegativeValueMap[line[currAttr]] + 1
                 else:
                     attributeNegativeValueMap[line[currAttr]] = 1
-        
+        #print(attributeNegativeValueMap)
+        #print(attributePositiveValueMap)
+
+        entropy = []
+        for key in attributePositiveValueMap:
+            p = attributePositiveValueMap[key]
+            n = attributeNegativeValueMap[key]
+            postiveEntropy = (((-p) / (p + n)) * math.log2((p) / (p + n)))
+            negativeEntropy = (((n) / (p + n)) * math.log2((n) / (p + n)))
+            entropy.append(((p + n) /  len(currentData)) * (postiveEntropy - negativeEntropy))
+
+        return sum(entropy)
         
 
 
