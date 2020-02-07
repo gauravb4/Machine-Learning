@@ -19,6 +19,8 @@ ID3 (Examples, Target_Attribute, Attributes)
     Return Root
 '''
 import math
+import copy
+import queue
 
 
 class DecisionTreeNode:
@@ -34,7 +36,9 @@ class DecisionTreeNode:
 class DecisionTree:
 
     def __init__(self, file):
-        self.attributes, self.label, self.data = self.parseData(file)
+        self.attributes, self.attributeValues, self.label, self.data = self.parseData(file)
+        self.usedAttributes = set()
+        #self.attributeValues = self.findValues(self.data, self.attributes)
         #print(self.data)
         self.build()
         return
@@ -47,22 +51,40 @@ class DecisionTree:
         attribute_values = [line[4:line.index(';')] for line in attribute_data]
         attribute_values = [line.split(", ")for line in attribute_values]
         datajson = []
-        
+
         data = {}
         for line in attribute_values:
             data = {}
             for i, attribute in enumerate(attributes): 
                 data[attribute] = line[i]
-
             datajson.append(data)
 
-        return attributes, label, datajson
+        attributeValues = {}
+        for attr in attributes:
+            tset = set()
+            for line in datajson:
+                if(line[attr] not in tset):
+                    tset.add(line[attr])
+            attributeValues[attr] = tset
+                
+        return attributes, attributeValues, label, datajson
 
     def build(self):
         #Line 4:  Create a root node for the tree
         self.root = DecisionTreeNode(None, None, self.data)
-        self.buildhelper(self.root)
+        self.root = self.buildhelper(self.root)
+        self.printTree()
         return
+
+    def printTree(self):
+        q = queue.Queue()
+        q.put(self.root)
+        while(not q.empty()):
+            node = q.get()
+            print(node.attribute)
+            for childs in node.children:
+                q.put(childs)
+
 
     def buildhelper(self, node):
         if node.data is None:
@@ -70,17 +92,35 @@ class DecisionTree:
         setEntropy = self.remainingDataEntropy(node.data)
         #Line 5: If all examples are positive, Return the single-node tree Root, with label = +.
         #Line 6: If all examples are negative, Return the single-node tree Root, with label = -.
-        if setEntropy == 0:
+        if setEntropy == 0 or len(node.data) == 0:
             return None
-        
+        print(node.answer)
+        print(node.data)
         print(setEntropy)
+        print(" ")
         bestAttribute = self.findHighestInformationGain(node.data, setEntropy)
-        print(bestAttribute)
+        if bestAttribute == None:
+            node.answer = self.label
+            return node
 
-        attributeIndex = self.attributes.index(bestAttribute)
+        attributeSet = self.attributeValues[bestAttribute]
+        node.attribute = bestAttribute
+        node.choices = attributeSet
+        self.usedAttributes.add(bestAttribute)
+        for key in attributeSet:
+            splitdata = []
+            for line in node.data:
+                if(line[bestAttribute] == key):
+                    temp = copy.deepcopy(line)
+                    del temp[bestAttribute]
+                    splitdata.append(temp)
+            childNode = DecisionTreeNode(None, bestAttribute, splitdata)
+            childNode.answer = key
+            childNode = self.buildhelper(childNode)
+            if childNode is not None:
+                node.children.append(childNode)
         
-
-        return None
+        return node
 
 
     def remainingDataEntropy(self, currentData):
@@ -96,7 +136,7 @@ class DecisionTree:
             return 0
         elif negativeLabel == 0:
             return 0
-
+            
         postiveEntropy = (((-positiveLabel) / (positiveLabel + negativeLabel)) * math.log2((positiveLabel) / (positiveLabel + negativeLabel)))
         negativeEntropy = (((negativeLabel) / (positiveLabel + negativeLabel)) * math.log2((negativeLabel) / (positiveLabel + negativeLabel)))
         return postiveEntropy - negativeEntropy 
@@ -106,11 +146,13 @@ class DecisionTree:
         maxGain = -1
         bestAttr =  None
         for currAttr in self.attributes[:-1]:
-            attrEntropy = self.findAttributeEntropy(currentData, currAttr)
-            if currentEntropy - attrEntropy > maxGain:
-                maxGain = currentEntropy - attrEntropy
-                bestAttr = currAttr
+            if currAttr not in self.usedAttributes:
+                attrEntropy = self.findAttributeEntropy(currentData, currAttr)
+                if currentEntropy - attrEntropy > maxGain:
+                    maxGain = currentEntropy - attrEntropy
+                    bestAttr = currAttr
 
+        print(bestAttr)
         return bestAttr
 
     def findAttributeEntropy(self, currentData, currAttr):
@@ -127,16 +169,24 @@ class DecisionTree:
                     attributeNegativeValueMap[line[currAttr]] = attributeNegativeValueMap[line[currAttr]] + 1
                 else:
                     attributeNegativeValueMap[line[currAttr]] = 1
-        #print(attributeNegativeValueMap)
-        #print(attributePositiveValueMap)
 
         entropy = []
-        for key in attributePositiveValueMap:
-            p = attributePositiveValueMap[key]
-            n = attributeNegativeValueMap[key]
-            postiveEntropy = (((-p) / (p + n)) * math.log2((p) / (p + n)))
-            negativeEntropy = (((n) / (p + n)) * math.log2((n) / (p + n)))
-            entropy.append(((p + n) /  len(currentData)) * (postiveEntropy - negativeEntropy))
+        posKeys = attributePositiveValueMap.keys()
+        negKeys = attributeNegativeValueMap.keys()
+        keySet = set()
+        for item in posKeys:
+            keySet.add(item)
+        for item in negKeys:
+            keySet.add(item)
+        for key in keySet:
+            p = attributePositiveValueMap[key] if key in posKeys else 0
+            n = attributeNegativeValueMap[key] if key in negKeys else 0
+            if(p != 0 and n != 0):
+                postiveEntropy = (((-p) / (p + n)) * math.log2((p) / (p + n)))
+                negativeEntropy = (((n) / (p + n)) * math.log2((n) / (p + n)))
+                entropy.append(((p + n) /  len(currentData)) * (postiveEntropy - negativeEntropy))
+            else:
+                entropy.append(0)
 
         return sum(entropy)
         
