@@ -1,0 +1,115 @@
+removing Low from data set
+{'Occupied': 'Low', 'Price': 'Normal', 'Music': 'Quiet', 'Location': 'Ein-Karem', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+removing Low from data set
+{'Occupied': 'Low', 'Price': 'Cheap', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+removing Low from data set
+{'Occupied': 'Low', 'Price': 'Cheap', 'Music': 'Quiet', 'Location': 'Talpiot', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'No'}
+removing Low from data set
+{'Occupied': 'Low', 'Price': 'Normal', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+removing Low from data set
+{'Occupied': 'Low', 'Price': 'Expensive', 'Music': 'Loud', 'Location': 'Mahane-Yehuda', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+removing Low from data set
+{'Occupied': 'Low', 'Price': 'Normal', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+removing Low from data set
+{'Occupied': 'Low', 'Price': 'Cheap', 'Music': 'Loud', 'Location': 'Ein-Karem', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+new data set length  7
+    removing Talpiot from data set
+    {'Price': 'Cheap', 'Music': 'Quiet', 'Location': 'Talpiot', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'No'}
+    new data set length  1
+    removing Mahane-Yehuda from data set
+    {'Price': 'Expensive', 'Music': 'Loud', 'Location': 'Mahane-Yehuda', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+    new data set length  1
+    new data set length  0
+    removing Ein-Karem from data set
+    {'Price': 'Normal', 'Music': 'Quiet', 'Location': 'Ein-Karem', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+    removing Ein-Karem from data set
+    {'Price': 'Cheap', 'Music': 'Loud', 'Location': 'Ein-Karem', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+    new data set length  2
+    new data set length  0
+        removing Normal from data set
+        {'Price': 'Normal', 'Music': 'Quiet', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+        new data set length  1
+        removing Cheap from data set
+        {'Price': 'Cheap', 'Music': 'Loud', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+        new data set length  1
+    removing City-Center from data set
+    {'Price': 'Cheap', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+    removing City-Center from data set
+    {'Price': 'Normal', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+    removing City-Center from data set
+    {'Price': 'Normal', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+    new data set length  3
+        removing Quiet from data set
+        {'Price': 'Cheap', 'Music': 'Quiet', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+        removing Quiet from data set
+        {'Price': 'Normal', 'Music': 'Quiet', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+        removing Quiet from data set
+        {'Price': 'Normal', 'Music': 'Quiet', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+        new data set length  3
+        removing No from data set
+        {'Price': 'Cheap', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+        removing No from data set
+        {'Price': 'Normal', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+        removing No from data set
+        {'Price': 'Normal', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+        new data set length  3
+        removing No from data set
+        {'Price': 'Cheap', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+        removing No from data set
+        {'Price': 'Normal', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+        removing No from data set
+        {'Price': 'Normal', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+        new data set length  3
+    [{'Price': 'Cheap', 'Enjoy': 'No'}, {'Price': 'Normal', 'Enjoy': 'No'}, {'Price': 'Normal', 'Enjoy': 'Yes'}]
+    new data set length  0
+    new data set length  0
+    new data set length  0
+removing High from data set
+{'Occupied': 'High', 'Price': 'Expensive', 'Music': 'Loud', 'Location': 'Talpiot', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+removing High from data set
+{'Occupied': 'High', 'Price': 'Expensive', 'Music': 'Loud', 'Location': 'City-Center', 'VIP': 'Yes', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+removing High from data set
+{'Occupied': 'High', 'Price': 'Expensive', 'Music': 'Loud', 'Location': 'City-Center', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+removing High from data set
+{'Occupied': 'High', 'Price': 'Normal', 'Music': 'Loud', 'Location': 'Mahane-Yehuda', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+removing High from data set
+{'Occupied': 'High', 'Price': 'Normal', 'Music': 'Quiet', 'Location': 'German-Colony', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+removing High from data set
+{'Occupied': 'High', 'Price': 'Cheap', 'Music': 'Loud', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+new data set length  6
+[{'Price': 'Expensive', 'Music': 'Loud', 'Location': 'Talpiot', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}, 
+{'Price': 'Expensive', 'Music': 'Loud', 'Location': 'City-Center', 'VIP': 'Yes', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}, 
+{'Price': 'Expensive', 'Music': 'Loud', 'Location': 'City-Center', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}, 
+{'Price': 'Normal', 'Music': 'Loud', 'Location': 'Mahane-Yehuda', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}, 
+{'Price': 'Normal', 'Music': 'Quiet', 'Location': 'German-Colony', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}, 
+{'Price': 'Cheap', 'Music': 'Loud', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}]
+
+
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Normal', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Expensive', 'Music': 'Quiet', 'Location': 'German-Colony', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Expensive', 'Music': 'Quiet', 'Location': 'German-Colony', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Normal', 'Music': 'Quiet', 'Location': 'Ein-Karem', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Cheap', 'Music': 'Loud', 'Location': 'Mahane-Yehuda', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Cheap', 'Music': 'Loud', 'Location': 'Talpiot', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'No'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Expensive', 'Music': 'Quiet', 'Location': 'Mahane-Yehuda', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Normal', 'Music': 'Loud', 'Location': 'Ein-Karem', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}
+removing Moderate from data set
+{'Occupied': 'Moderate', 'Price': 'Normal', 'Music': 'Quiet', 'Location': 'Talpiot', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}
+new data set length  9
+[{'Price': 'Normal', 'Music': 'Quiet', 'Location': 'City-Center', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}, 
+{'Price': 'Expensive', 'Music': 'Quiet', 'Location': 'German-Colony', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'No'},
+ {'Price': 'Expensive', 'Music': 'Quiet', 'Location': 'German-Colony', 'VIP': 'Yes', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}, 
+ {'Price': 'Normal', 'Music': 'Quiet', 'Location': 'Ein-Karem', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}, 
+ {'Price': 'Cheap', 'Music': 'Loud', 'Location': 'Mahane-Yehuda', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}, 
+ {'Price': 'Cheap', 'Music': 'Loud', 'Location': 'Talpiot', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'No'}, 
+ {'Price': 'Expensive', 'Music': 'Quiet', 'Location': 'Mahane-Yehuda', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'},
+ {'Price': 'Normal', 'Music': 'Loud', 'Location': 'Ein-Karem', 'VIP': 'No', 'Favorite Beer': 'Yes', 'Enjoy': 'Yes'}, 
+ {'Price': 'Normal', 'Music': 'Quiet', 'Location': 'Talpiot', 'VIP': 'No', 'Favorite Beer': 'No', 'Enjoy': 'Yes'}]

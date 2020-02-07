@@ -26,20 +26,17 @@ import queue
 class DecisionTreeNode:
     
     def __init__(self, attribute, prev, data):
-        self.attribute = attribute
-        self.prev = prev
+        self.chosenAttribute = attribute
+        self.prevAttributeValue = prev
         self.data = data
-        self.answer = None
+        self.prediction = None
         self.children = []
-        self.choices = {}
 
 class DecisionTree:
 
     def __init__(self, file):
         self.attributes, self.attributeValues, self.label, self.data = self.parseData(file)
         self.usedAttributes = set()
-        #self.attributeValues = self.findValues(self.data, self.attributes)
-        #print(self.data)
         self.build()
         return
 
@@ -76,49 +73,79 @@ class DecisionTree:
         self.printTree()
         return
 
-    def printTree(self):
-        q = queue.Queue()
-        q.put(self.root)
-        while(not q.empty()):
-            node = q.get()
-            print(node.attribute)
-            for childs in node.children:
-                q.put(childs)
-
+    def predict(self, data):
+        p = 0
+        n = 0
+        print(data)
+        for d in data:
+            if d[self.label] == 'Yes':
+                p += 1
+            else:
+                n += 1
+        return 'Yes' if p >= n else 'No'
+    
+    def printTree(self, node=None, indent=0):
+        tabbing = '    ' 
+        if not node:
+            node = self.root
+        print(indent*tabbing, end = " ")
+        if(node.prevAttributeValue):
+            print(node.prevAttributeValue + ": ", end = " ")
+        print(node.chosenAttribute)
+        for child in node.children:
+            self.printTree(child, indent + 1)
+            print((indent+1)*tabbing, end = " ")
+            #if node.prediction:
+            print(node.prediction)
+            #else:
+            #    print("Somethings missing")
 
     def buildhelper(self, node):
-        if node.data is None:
-            return None
         setEntropy = self.remainingDataEntropy(node.data)
         #Line 5: If all examples are positive, Return the single-node tree Root, with label = +.
         #Line 6: If all examples are negative, Return the single-node tree Root, with label = -.
-        if setEntropy == 0 or len(node.data) == 0:
-            return None
-        print(node.answer)
-        print(node.data)
-        print(setEntropy)
-        print(" ")
+        if setEntropy == 2:
+            node.chosenAttribute = self.label
+            node.prediction = 'Yes'
+            return node
+        if setEntropy == -2:
+            node.chosenAttribute = self.label
+            node.prediction = 'No'
+            return node
+        if setEntropy == 0 or len(node.data) <= 1:
+            if(node.prevAttributeValue == 'Mahane-Yehuda'):
+                print("value should be yes here")
+            node.chosenAttribute = self.label
+            node.prediction = self.predict(node.data)
+            return node
         bestAttribute = self.findHighestInformationGain(node.data, setEntropy)
         if bestAttribute == None:
-            node.answer = self.label
+            node.chosenAttribute = self.label
+            node.prediction = self.predict(node.data)
             return node
 
         attributeSet = self.attributeValues[bestAttribute]
-        node.attribute = bestAttribute
-        node.choices = attributeSet
+        node.chosenAttribute = bestAttribute
         self.usedAttributes.add(bestAttribute)
+
         for key in attributeSet:
             splitdata = []
             for line in node.data:
                 if(line[bestAttribute] == key):
+                    print("removing " + key + " from data set")
+                    print(line)
                     temp = copy.deepcopy(line)
                     del temp[bestAttribute]
                     splitdata.append(temp)
-            childNode = DecisionTreeNode(None, bestAttribute, splitdata)
-            childNode.answer = key
+            print("new data set length ", end = " ")
+            print(len(splitdata))      
+            childNode = DecisionTreeNode(None, key, splitdata)
             childNode = self.buildhelper(childNode)
             if childNode is not None:
                 node.children.append(childNode)
+            else:
+                node.prediction = self.predict(node.data)
+                
         
         return node
 
@@ -133,14 +160,13 @@ class DecisionTree:
                 negativeLabel += 1
         
         if positiveLabel == 0:
-            return 0
+            return -2
         elif negativeLabel == 0:
-            return 0
+            return 2
             
         postiveEntropy = (((-positiveLabel) / (positiveLabel + negativeLabel)) * math.log2((positiveLabel) / (positiveLabel + negativeLabel)))
         negativeEntropy = (((negativeLabel) / (positiveLabel + negativeLabel)) * math.log2((negativeLabel) / (positiveLabel + negativeLabel)))
         return postiveEntropy - negativeEntropy 
-
 
     def findHighestInformationGain(self, currentData, currentEntropy):
         maxGain = -1
@@ -152,7 +178,6 @@ class DecisionTree:
                     maxGain = currentEntropy - attrEntropy
                     bestAttr = currAttr
 
-        print(bestAttr)
         return bestAttr
 
     def findAttributeEntropy(self, currentData, currAttr):
@@ -190,9 +215,6 @@ class DecisionTree:
 
         return sum(entropy)
         
-
-
-    
 
 data = open("./dt_data.txt", 'r')
 dt = DecisionTree(data)
