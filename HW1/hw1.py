@@ -227,5 +227,5 @@ class DecisionTree:
 
 data = open("./dt_data.txt", 'r')
 dt = DecisionTree(data)
-predicitionQuery = {'Occupied': 'High', 'Price': 'Cheap', 'Music': 'Loud', 'Location': 'Ein-Karem', 'VIP': 'No', 'Favorite Beer': 'No'}
+predicitionQuery = {'Occupied': 'Moderate', 'Price': 'Cheap', 'Music': 'Loud', 'Location': ' City-Center', 'VIP': 'No', 'Favorite Beer': 'No'}
 print(dt.predictQuery(predicitionQuery, dt.root))
