@@ -11,6 +11,9 @@ class Point:
         self.x = x
         self.y = y
 
+    def equal(self, other):
+        return (self.x == other.x and self.y == other.y)
+    
     def distance(self, other):
         return npy.sqrt((((self.x - other.x) * (self.x - other.x)) + ((self.y - other.y) * (self.y - other.y))))
 
@@ -29,8 +32,6 @@ class kmeans:
         self.centroids = self.start()
 
 
-        return
-
     def assignClusters(self, data, centroids):
         currMap = {c : [] for c in centroids}
         for point in data:
@@ -47,7 +48,17 @@ class kmeans:
 
 
     def reCalcCentroids(self, clusterData):
-        return None
+        newPoints = []
+        for key in clusterData:
+            sumX = 0
+            sumY = 0
+            lenCluster = len(clusterData[key])
+            for p in clusterData[key]:
+                sumX += p.x
+                sumY += p.y
+            newPoints.append(Point(sumX / lenCluster, sumY / lenCluster))
+
+        return newPoints
 
 
     def start(self):
@@ -59,7 +70,9 @@ class kmeans:
             currData = self.points
             clusters = self.assignClusters(currData, currCentroids)
             newCentroids = self.reCalcCentroids(clusters)
-
+            found = False
+            for c in newCentroids:
+                
             ite += 1
             mainmap = clusters
 
