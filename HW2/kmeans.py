@@ -45,6 +45,11 @@ class kmeans:
 
         return currMap
 
+
+    def reCalcCentroids(self, clusterData):
+        return None
+
+
     def start(self):
         currCentroids = npy.random.choice(self.points, 3)
         mainmap = None
@@ -53,7 +58,7 @@ class kmeans:
         while difference != 0 and ite < self.maxIterations:
             currData = self.points
             clusters = self.assignClusters(currData, currCentroids)
-            currCentroids = self.reCalcCentroids(clusters)
+            newCentroids = self.reCalcCentroids(clusters)
 
             ite += 1
             mainmap = clusters
