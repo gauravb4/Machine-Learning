@@ -2,9 +2,6 @@ import numpy as npy
 import pprint as pp
 from random import sample
 
-#https://www.analyticsvidhya.com/blog/2019/08/comprehensive-guide-k-means-clustering/
-#https://datatofish.com/k-means-clustering-python/
-
 class Point:
 
     def __init__(self, x, y):
@@ -29,7 +26,9 @@ class kmeans:
         self.maxIterations = maxium
 
         
-        self.centroids = self.start()
+        self.clusters, self.centroids = self.start()
+        pp.pprint(self.clusters)
+        pp.pprint(self.centroids)
 
 
     def assignClusters(self, data, centroids):
@@ -56,27 +55,31 @@ class kmeans:
             for p in clusterData[key]:
                 sumX += p.x
                 sumY += p.y
-            newPoints.append(Point(sumX / lenCluster, sumY / lenCluster))
+            newPoints.append((key, Point(sumX / lenCluster, sumY / lenCluster)))
 
         return newPoints
 
 
     def start(self):
         currCentroids = npy.random.choice(self.points, 3)
-        mainmap = None
         ite = 0
         difference = 10000
+        clusters = self.assignClusters(self.points, currCentroids)
         while difference != 0 and ite < self.maxIterations:
-            currData = self.points
-            clusters = self.assignClusters(currData, currCentroids)
             newCentroids = self.reCalcCentroids(clusters)
-            found = False
-            for c in newCentroids:
+            found = True
+            for x, y in newCentroids:
+                if(x.equal(y) == False):
+                    found = False
+            if(found == False):
+                break
+
+            clusters = self.assignClusters(self.points, newCentroids)
                 
             ite += 1
-            mainmap = clusters
+            currCentroids = newCentroids
 
-        return mainmap
+        return clusters, currCentroids
 
     def parseDoc(self, filename):
         f = open(filename, 'r')
