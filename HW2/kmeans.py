@@ -1,6 +1,7 @@
 import numpy as npy
 import pprint as pp
 from random import sample
+import matplotlib.pyplot as plt
 
 class Point:
 
@@ -27,8 +28,33 @@ class kmeans:
 
         
         self.clusters, self.centroids = self.start()
-        pp.pprint(self.clusters)
-        pp.pprint(self.centroids)
+        self.display()
+
+
+    def display(self):
+        data = []
+        colors = ("red", "green", "blue")
+        for key in self.clusters:
+            g = [[], []]
+            for point in self.clusters[key]:
+                g[0].append(point.x)
+                g[1].append(point.y)
+            data.append(g)
+        
+        groups = ("coffee", "tea", "water")
+
+        # Create plot
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+
+        for data, color, group in zip(data, colors, groups):
+            x, y = data
+            ax.scatter(x, y, alpha=0.8, c=color, edgecolors='none', s=30, label=group)
+
+        plt.title('Matplot scatter plot')
+        plt.legend(loc=2)
+        plt.show()
+        
 
 
     def assignClusters(self, data, centroids):
@@ -63,21 +89,21 @@ class kmeans:
     def start(self):
         currCentroids = npy.random.choice(self.points, 3)
         ite = 0
-        difference = 10000
         clusters = self.assignClusters(self.points, currCentroids)
-        while difference != 0 and ite < self.maxIterations:
+        while ite < self.maxIterations:
             newCentroids = self.reCalcCentroids(clusters)
+            print(ite)
             found = True
+            i = 0
             for x, y in newCentroids:
                 if(x.equal(y) == False):
                     found = False
-            if(found == False):
+                    currCentroids[i] = y
+                    i += 1  
+            if(found == True):
                 break
-
-            clusters = self.assignClusters(self.points, newCentroids)
-                
+            clusters = self.assignClusters(self.points, currCentroids)
             ite += 1
-            currCentroids = newCentroids
 
         return clusters, currCentroids
 
@@ -90,4 +116,4 @@ class kmeans:
         
         return npy.array(pointList)
 
-km = kmeans("clusters.txt", 3, 1)
+km = kmeans("clusters.txt", 3, 1000)
