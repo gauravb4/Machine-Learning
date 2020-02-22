@@ -28,8 +28,13 @@ class kmeans:
 
         
         self.clusters, self.centroids = self.start()
-        self.display()
+        #self.display()
+    
+    def getClusters(self):
+        return self.clusters
 
+    def getCentroids(self):
+        return self.centroids
 
     def display(self):
         data = []
