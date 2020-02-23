@@ -28,6 +28,7 @@ class kmeans:
 
         
         self.clusters, self.centroids = self.start()
+        pp.pprint(self.centroids)
         #self.display()
     
     @staticmethod
