@@ -1,4 +1,4 @@
-import numpy as npy
+import numpy as np
 import pprint as pp
 from random import sample
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ class Point:
         return (self.x == other.x and self.y == other.y)
     
     def distance(self, other):
-        return npy.sqrt((((self.x - other.x) * (self.x - other.x)) + ((self.y - other.y) * (self.y - other.y))))
+        return np.sqrt((((self.x - other.x) * (self.x - other.x)) + ((self.y - other.y) * (self.y - other.y))))
 
     def __repr__(self):
         return ("(X: " + str(self.x) + ", Y: " + str(self.y) + ")")
@@ -30,9 +30,11 @@ class kmeans:
         self.clusters, self.centroids = self.start()
         #self.display()
     
+    @staticmethod
     def getClusters(self):
         return self.clusters
 
+    @staticmethod
     def getCentroids(self):
         return self.centroids
 
@@ -92,12 +94,12 @@ class kmeans:
 
 
     def start(self):
-        currCentroids = npy.random.choice(self.points, 3)
+        currCentroids = np.random.choice(self.points, 3)
         ite = 0
         clusters = self.assignClusters(self.points, currCentroids)
         while ite < self.maxIterations:
             newCentroids = self.reCalcCentroids(clusters)
-            print(ite)
+            #print(ite)
             found = True
             i = 0
             for x, y in newCentroids:
@@ -119,6 +121,6 @@ class kmeans:
         for line in clusterData:
             pointList.append(Point(float(line.strip().split(",")[0]), float(line.strip().split(",")[1])))
         
-        return npy.array(pointList)
+        return np.array(pointList)
 
 km = kmeans("clusters.txt", 3, 1000)
