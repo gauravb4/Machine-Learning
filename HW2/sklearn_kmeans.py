@@ -14,4 +14,5 @@ def parse(file):
 data = parse('clusters.txt')
 km = sklearn.cluster.KMeans(n_clusters=3)
 km.fit(data)
+print("Cluster Centers: ")
 print(km.cluster_centers_)
