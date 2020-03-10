@@ -1,19 +1,16 @@
 import numpy as np
 import pprint as pp
 import random as rr
-from collections import defaultdict
+import matplotlib.pyplot as plt
 
 class FastMap():
 
     def __init__(self, filename):
         self.distances, self.objList = self.parse(filename)
-        self.new_dimensions = defaultdict(list)
-        self.current_dimension = 0
         self.currMax, self.maxDistance = self.initfurthestpoints()
         self.vals = {}
         self.initCords()
         self.leftVals = 2 - len(self.vals[self.currMax[0]])
-        pp.pprint(self.vals)
 
         for i in range(self.leftVals):
             self.currMax, self.maxDistance = self.furthestPoints()
@@ -124,7 +121,7 @@ class FastMap():
         newDist  = {}
         maxVal = -1111111
         r = rr.choice(self.objList)
-        for curr in range(6):
+        for curr in range(3):
             for p in self.objList:
                 if p != r:
                     dist = None
@@ -137,9 +134,40 @@ class FastMap():
             currTuple = (currTuple[1], currTuple[0])
         return currTuple, maxVal
 
+    
+    def plot(self, filename):
+        f = open(filename, 'r')
+        plt.clf()
+        words = [line.strip() for line in f.readlines()]
+        wordMap = {}
+        minX = 100000
+        maxX = -1
+        minY = 100000
+        maxY = -1
+        xs = []
+        ys = []
+        for i, val in enumerate(self.vals):
+            wordMap[words[i]] = self.vals[val]
+            maxX = max(self.vals[val][0], maxX)
+            maxY = max(self.vals[val][1], maxY)
+            maxX = min(self.vals[val][0], minX)
+            maxX = min(self.vals[val][1], minY)
+            xs.append(self.vals[val][0])
+            ys.append(self.vals[val][1])
+        
+        #xs = np.arange(minX, maxX, 0.1)
+        #ys = np.arange(minY, maxY, 0.1)
+
+        plt.scatter(xs, ys)
+        for i, key in enumerate(wordMap):
+            plt.annotate(key, (wordMap[key][0], wordMap[key][1]), textcoords="offset points", xytext=(0,10),ha='center')
+        plt.show()
+
 
 
 filename = "fastmap-data.txt"
+plotfile = "fastmap-wordlist.txt"
 fm = FastMap(filename)
+fm.plot(plotfile)
 #distances, ids = parse(filename)
 #fastmap(distances, ids)
