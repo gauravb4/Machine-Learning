@@ -5,7 +5,13 @@ class NeuralNetwork:
         self.testData = self.parse(testFile)
     
     def parse(self, file):
-        pass
+        file_list = []
+
+        with open(file, 'r') as f:
+            for line in f:
+                file_list.append(line.strip())
+        return file_list
+
 
 
 test = "downgesture_test.list"
