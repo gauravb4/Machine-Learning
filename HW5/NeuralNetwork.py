@@ -14,8 +14,25 @@ class NeuralNetwork:
         with open(file, 'r') as f:
             for line in f:
                 label = 1 if "down" in line else 0
-                file_list.append([line.strip(), label])
+                img = self.parse_img('gestures/' + line.strip())
+                file_list.append([img, label])
+        # print(file_list[1])
         return np.array(file_list)
+
+    def parse_img(self, fn):
+        f = open(fn, 'rb')
+        assert f.readline() == 'P5\n'
+        f.readline()
+        dim = [int(i) for i in f.readline().split()]
+        assert int(f.readline()) == 255
+        # print(dim)
+
+        img = np.zeros(dim[0] * dim[1])
+        for i in range(dim[1]):
+            for j in range(dim[0]):
+                # print(i, j)
+                img[i * dim[0] + j] = ord(f.read(1))/255.0
+        return img
 
     def sig(self, s):
         return 1/(1+np.exp(-s))
