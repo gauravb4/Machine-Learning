@@ -67,7 +67,6 @@ class NeuralNetwork:
         return gradient
     
     def train(self, trainingData):
-        history = {}
         vals = trainingData[0].T
         labels = np.array([(trainingData[1].T)])
 
@@ -78,8 +77,6 @@ class NeuralNetwork:
 
             if ((curr+1)%100 == 0):
                 print("Epoch " +  str(curr) +  " Accuracy: " +  str(ac))
-
-            history[curr] = (c, ac)
             gradient = self.fullBackward(newLabels, labels, results_A, results_Z)
             for i in range(self.numLayers):
                 self.weights[i] = self.weights[i] - (self.learningRate * gradient[i][0])
