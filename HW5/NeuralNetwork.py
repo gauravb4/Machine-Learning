@@ -6,10 +6,11 @@ class NeuralNetwork:
     def __init__(self, trainFile, testFile, epochs=1000, learningRate=0.1):
         self.epochs = epochs
         self.learningRate = learningRate
-        tData = self.parse(trainFile)
+        tData, _ = self.parse(trainFile)
         self.trainData = self.process(tData)
-        tData = self.parse(testFile)
+        tData, tDataName = self.parse(testFile)
         self.testData = self.process(tData)
+        self.testFiles = tDataName
         self.hiddenLayer = (960,100)
         self.inputLayer = (100,1)
         self.numLayers = 2
@@ -19,14 +20,13 @@ class NeuralNetwork:
         self.biases = {}
         self.biases[0] = np.random.uniform(-0.01, 0.01, (self.hiddenLayer[1], 1))
         self.biases[1] = np.random.uniform(-0.01, 0.01, (self.inputLayer[1], 1))
+
         self.train(self.trainData)  
-        results, _ =  self.fullForward(self.testData[0].T)
-        a, c = self.getAccuracy(results, np.array([(self.testData[1].T)])) 
-        print(a)
-        print(c)
+        self.test(self.testData)       
 
     def fullForward(self, values):
-        results = {}
+        results_A = {}
+        results_Z = {}
         currSet = values
 
         for i in range(self.numLayers):
@@ -35,10 +35,9 @@ class NeuralNetwork:
             currentBias = self.biases[i]
             weightedSum = np.dot(currentWeight, prevSet) + currentBias
             currSet = self.sig(weightedSum)
-            results['A' + str(i)] = prevSet
-            results['Z' + str(i)] = weightedSum
-        
-        return currSet, results
+            results_A[i] = prevSet
+            results_Z[i] = weightedSum
+        return currSet, results_A, results_Z
     
     def getAccuracy(self, new, old):
         temp = np.zeros(new.shape)
@@ -48,15 +47,15 @@ class NeuralNetwork:
         new = temp
         return (new == old).all(axis=0).mean(), new
     
-    def fullBackward(self, new, old, results):
+    def fullBackward(self, new, old, results_A, results_Z):
         gradient = {}
         old = old.reshape(new.shape)
 
-        prev_dA = -(np.divide(old, new) - np.divide(1-old, 1-new))
+        prev_dA = (np.divide(old, new) - np.divide(1-old, 1-new)) * -1
         for i in reversed(range(self.numLayers)):
             curr_dA = prev_dA
-            prev_A = results['A' + str(i)]
-            curr_Z = results['Z' + str(i)]
+            prev_A = results_A[i]
+            curr_Z = results_Z[i]
             curr_weight = self.weights[i]
 
             dZ = self.sig_b(curr_Z) * curr_dA
@@ -65,7 +64,6 @@ class NeuralNetwork:
             prev_dA = np.dot(curr_weight.T, dZ)
 
             gradient[i] = [dW, dB]
-
         return gradient
     
     def train(self, trainingData):
@@ -74,16 +72,39 @@ class NeuralNetwork:
         labels = np.array([(trainingData[1].T)])
 
         for curr in range(self.epochs):
-            newLabels, results = self.fullForward(vals)
+            newLabels, results_A, results_Z = self.fullForward(vals)
             c = np.sum((labels-newLabels) ** 2)
             ac, _ = self.getAccuracy(newLabels, labels)
+
+            if ((curr+1)%100 == 0):
+                print("Epoch " +  str(curr) +  " Accuracy: " +  str(ac))
+
             history[curr] = (c, ac)
-            gradient = self.fullBackward(newLabels, labels, results)
+            gradient = self.fullBackward(newLabels, labels, results_A, results_Z)
             for i in range(self.numLayers):
                 self.weights[i] = self.weights[i] - (self.learningRate * gradient[i][0])
                 self.biases[i] = self.biases[i] - (self.learningRate * gradient[i][1])
             continue
 
+    def test(self, testingData):
+        results, _, _ =  self.fullForward(testingData[0].T)
+        a, c = self.getAccuracy(results, np.array([(testingData[1].T)])) 
+        print("*******************")
+        print("Final accuracy: " + str(a))
+        c = c.T
+        test_labels = (np.array([(testingData[1].T)])).T
+        matches = []
+        row = []
+        for i in range(len(c)):
+            if(c[i] == test_labels[i]):
+                row.append(str(i) + "-Match")
+            else:
+                row.append(str(i) + "-NoMatch")
+            if (i+1)%5 == 0:
+                matches.append(row)
+                row = []
+        pp.pprint(matches)
+        print("*******************")
 
     def process(self, data):
        listOne = []
@@ -95,13 +116,14 @@ class NeuralNetwork:
     
     def parse(self, file):
         file_list = []
+        file_names = []
         with open(file, 'r') as f:
             for line in f:
                 label = 1 if "down" in line else 0
                 img = self.parse_img('gestures/' + line.strip())
                 file_list.append([img, label])
-        # print(file_list[1])
-        return file_list
+                file_names.append(line.strip())
+        return file_list, file_names
 
     def parse_img(self, fn):
         f = open(fn, 'rb')
