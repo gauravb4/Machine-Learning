@@ -19,8 +19,12 @@ class NeuralNetwork:
         self.biases = {}
         self.biases[0] = np.random.uniform(-0.01, 0.01, (self.hiddenLayer[1], 1))
         self.biases[1] = np.random.uniform(-0.01, 0.01, (self.inputLayer[1], 1))
-        self.train(self.trainData)    
-    
+        self.train(self.trainData)  
+        results, _ =  self.fullForward(self.testData[0].T)
+        a, c = self.getAccuracy(results, np.array([(self.testData[1].T)])) 
+        print(a)
+        print(c)
+
     def fullForward(self, values):
         results = {}
         currSet = values
@@ -42,11 +46,26 @@ class NeuralNetwork:
             if new[0, i] > 0.5:
                 temp[0, i] = 1
         new = temp
-        return (new == old).all(axis=0).mean()
+        return (new == old).all(axis=0).mean(), new
     
     def fullBackward(self, new, old, results):
-        gradient = []
+        gradient = {}
         old = old.reshape(new.shape)
+
+        prev_dA = -(np.divide(old, new) - np.divide(1-old, 1-new))
+        for i in reversed(range(self.numLayers)):
+            curr_dA = prev_dA
+            prev_A = results['A' + str(i)]
+            curr_Z = results['Z' + str(i)]
+            curr_weight = self.weights[i]
+
+            dZ = self.sig_b(curr_Z) * curr_dA
+            dW = np.dot(dZ, prev_A.T) / prev_A.shape[1]
+            dB = np.sum(dZ, axis=1, keepdims=True) / prev_A.shape[1]
+            prev_dA = np.dot(curr_weight.T, dZ)
+
+            gradient[i] = [dW, dB]
+
         return gradient
     
     def train(self, trainingData):
@@ -57,7 +76,7 @@ class NeuralNetwork:
         for curr in range(self.epochs):
             newLabels, results = self.fullForward(vals)
             c = np.sum((labels-newLabels) ** 2)
-            ac = self.getAccuracy(newLabels, labels)
+            ac, _ = self.getAccuracy(newLabels, labels)
             history[curr] = (c, ac)
             gradient = self.fullBackward(newLabels, labels, results)
             for i in range(self.numLayers):
@@ -86,17 +105,14 @@ class NeuralNetwork:
 
     def parse_img(self, fn):
         f = open(fn, 'rb')
-        #assert f.readline() == 'P5\n'
         f.readline()
         f.readline()
         dim = [int(i) for i in f.readline().split()]
         assert int(f.readline()) == 255
-        # print(dim)
 
         img = np.zeros(dim[0] * dim[1])
         for i in range(dim[1]):
             for j in range(dim[0]):
-                # print(i, j)
                 img[i * dim[0] + j] = ord(f.read(1))/255.0
         return img
 
