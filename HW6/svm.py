@@ -27,8 +27,33 @@ class SupportVectorMachine:
         self.type = type
         self.fit()
 
+    def linKernelGen(self, pos, i, j):
+        return np.dot(pos[i], pos[j])
+
+    def nonLinGen(self, pos, i, j):
+        exp = 0.0
+        for k in range(pos[i]):
+            exp += (pos[i][k] - pos[j][k])**2
+        return math.exp(-0.005 * exp)
+
     def fit(self):
-        pass
+        pos = []
+        ls = []
+        for point in self.points:
+            pos.append((point.x, point.y))
+            ls.append(point.label)
+        
+        pos = np.array(pos)
+        ls = np.array(ls)
+        K = np.zeros(len(pos), len(pos))
+        for i in range(len(pos)):
+            for j in range(len(pos)):
+                if self.type == "linear":
+                    K[i, j] = self.linKernelGen(pos, i, j)
+                else:
+                    K[i, j] = self.nonLinGen(pos, i, j)
+                
+        return
 
     def parseDoc(self, filename):
         f = open(filename, 'r')
