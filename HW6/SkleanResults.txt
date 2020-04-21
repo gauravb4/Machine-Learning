@@ -28,6 +28,8 @@ Coefficient
 array([[ 3.59965788, -2.03198838]])
 Intercept
 array([0.21848298])
+
+
 Nonlinear
 Support Vectors
 array([[ -8.47422847,   5.15621613],

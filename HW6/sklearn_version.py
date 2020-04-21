@@ -21,7 +21,7 @@ q = open("SkleanResults.txt", "w+")
 
 q.write("Linear\n")
 t = sklearn.svm.SVC(kernel="linear")
-t.fit(points, labels)
+t.fit(points, labels) 
 q.write("Support Vectors\n")
 pprint.pprint(t.support_vectors_)
 pprint.pprint(t.support_vectors_, stream=q)
@@ -32,6 +32,7 @@ q.write("Intercept\n")
 pprint.pprint(t.intercept_)
 pprint.pprint(t.intercept_, stream=q)
 
+q.write("\n\n")
 points, labels = parseDoc(nonlinstep)
 
 q.write("Nonlinear\n")
