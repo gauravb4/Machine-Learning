@@ -43,13 +43,12 @@ class SupportVectorMachine:
         for i in range(len(self.alphas)):
             self.weights += self.sv[i] * self.sv_ls[i] * self.alphas[i]
 
-    def calcIntercept(self):
-        self.intercept = self.sv_ls[0] - np.dot(self.weights, self.sv[0])
-        # intercept = 0
-        # for i in range(len(self.alphas)):
-        #     intercept = intercept + self.sv_ls[i].astype(float)
-        #     intercept -= np.sum(self.alphas * self.sv_ls.astype(float) * K[np.arange(len(a))[i], sv])
-        # self.intercept = intercept / len(self.alphas)
+    def calcIntercept(self, K, a, sv):
+        self.intercept = 0
+        for i in range(len(self.alphas)):
+            self.intercept += self.sv_ls[i].astype(float) - np.sum(self.alphas * self.sv_ls.astype(float) * K[np.arange(len(a))[sv][i], sv])
+        self.intercept /= len(self.alphas)
+
 
     def fit(self):
         pos = []
@@ -86,7 +85,7 @@ class SupportVectorMachine:
         self.sv_ls = ls[support_vectors]
 
         self.calcWeight(len(pos[0]))
-        self.calcIntercept(K)
+        self.calcIntercept(K, alphas, support_vectors)
                 
         return
 
