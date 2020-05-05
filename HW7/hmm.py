@@ -1,6 +1,7 @@
 import numpy as np
 import pprint as pp
 from collections import defaultdict
+import copy
 
 
 class PathNode:
@@ -195,7 +196,7 @@ class HMM:
 
     def transition(self):
         tProb = []
-        
+        temp = copy.deepcopy(self.pointsListByTime)
         for timestep, points in enumerate(self.pointsListByTime[:-1]):
             currTimestep = {}
             prune = []
@@ -207,10 +208,11 @@ class HMM:
                 for n in neighbors:
                     if self.pContains(self.pointsListByTime[timestep + 1],n):
                         p = False
-                        timeStepState[n] = 0.25
+                    timeStepState[n] = 0.25
                 if p:
                     currTimestep.pop(point)
                     prune.append(point)
+            
             for point in prune:
                 self.pointsListByTime[timestep].remove(point)
 
