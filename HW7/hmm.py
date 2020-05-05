@@ -5,8 +5,8 @@ import copy
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.axes
-import matplotlib.animation as animation
-from matplotlib.animation import PillowWriter
+import os
+
 from PIL import Image
 import glob
 
@@ -234,6 +234,7 @@ class HMM:
                     append_images=frames[1:],
                     save_all=True,
                     duration=100, loop=10000)
+        os.startfile('route.gif')
 
     def generatePath(self, allPaths):
         mProb = 0.0
