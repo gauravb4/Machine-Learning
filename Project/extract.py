@@ -12,14 +12,15 @@ import csv
 def main():
     rootdir = "fma_small"
     imagedir = "fma_small_img"
-    tracks = pd.read_csv('tracks.csv', index_col=0, header=[0,1])
+    metadata = "tracks.csv"
+    output_file = "genres_small.csv"
+
+    tracks = pd.read_csv(metadata, index_col=0, header=[0,1])
     tracks = tracks['track']['genre_top']
     track_genres = {}
     count = 0
     for subdir, dirs, files in os.walk(rootdir):
         for file in files:
-            if count >= 10:
-                break
             filepath = subdir + os.sep + file
             if(filepath.endswith("mp3")):
                 print(filepath)
@@ -37,13 +38,12 @@ def main():
                 plt.tight_layout()
                 fig.savefig(imagedir + os.sep + filename + ".png", bbox_inches='tight', pad_inches=0)
                 plt.close(fig)
-                # print(imagedir + os.sep + filename + ".png")
 
                 genre = tracks[int(filename)]
                 track_genres[filename] = genre
                 count += 1
 
-    with open('genres_small.csv', 'w') as f:
+    with open(output_file, 'w') as f:
         w = csv.writer(f)
         w.writerows(track_genres.items())
     print("Total Count: " + str(count))
