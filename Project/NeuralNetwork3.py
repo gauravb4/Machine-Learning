@@ -1,8 +1,10 @@
 import numpy as np
 import sys
 import time
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import random
+from PIL import Image
+import os
 
 # Layer class that represent each layer in the neural network
 class Layer:
@@ -45,12 +47,23 @@ class Layer:
 class NN:
     def __init__(self, files, testMode=False):     
         self.testMode = testMode
+        self.label_dict = {
+            "Hip-Hop": 0,
+            "Pop" : 1,
+            "Folk": 2,
+            "Experimental" : 3,
+            "Rock" : 4,
+            "International" : 5,
+            "Electronic" : 6,
+            "Instrumental" : 7
+        }
         train_image, train_label, test_image, test_label = self.parse(files)
+
         self.train_image = train_image
         self.train_label = train_label
         self.test_image = test_image
         self.test_label = test_label
-        self.network = []
+        self.network = []   
         
     # Initialize the hyperparameters (model, learning rate, batch size, epochs)
     def hyper_param_init(self, layers, rate, b_size, epochs):
@@ -70,31 +83,37 @@ class NN:
             print("Parsing start...")
             start = time.time()
 
-        train_image, train_label, test_image, test_label = ([] for i in range(4))
-        with open(files[0]) as fp:
-            for l in fp.readlines():
-                data = l.strip().split(',')
-                train_image.append([int(i)/255.0 for i in data])
+        images, labels = ({} for i in range(2))
+        ordered_images, ordered_labels = ([] for i in range(2))
+
+        for subdir, dirs, img_files in os.walk(files[0]):
+            for img_file in img_files:
+                filepath = subdir + os.sep + img_file
+                if(filepath.endswith("png")):
+                    # print(filepath)
+                    filename = img_file[:-4]
+                    img = Image.open(filepath).convert('L')
+                    np_img = np.asarray(img).flatten()
+                    images[filename] = np_img
+
         with open(files[1]) as fp:
             for l in fp.readlines():
-                data = int(l.strip())
-                train_label.append(data)
-        with open(files[2]) as fp:
-            for l in fp.readlines():
+                if len(l.strip()) == 0:
+                    continue
                 data = l.strip().split(',')
-                test_image.append([int(i)/255.0 for i in data])
+                # print(data)
+                labels[data[0]] = data[1]   
 
-        # Read the test labels if doing testing, skip for grading
-        if self.testMode == True:
-            with open(t_label_file) as fp:
-                for l in fp.readlines():
-                    data = int(l.strip())
-                    test_label.append(data)
+        for key, value in images.items():
+            ordered_images.append(value.tolist())
+            ordered_labels.append(self.label_dict[labels[key]])
+        # print(ordered_labels[2])
 
-        train_image = np.array(train_image)
-        train_label = np.array(train_label)
-        test_image = np.array(test_image)
-        test_label = np.array(test_label)
+        train_image, train_label, test_image, test_label = ([] for i in range(4))
+        train_image = np.array(ordered_images[:-1000])
+        train_label = np.array(ordered_labels[:-1000])
+        test_image = np.array(ordered_images[-1000:])
+        test_label = np.array(ordered_labels[-1000:])
 
         if self.testMode == True:
             print("Parsing Complete, time elapsed: " + str(time.time() - start))
@@ -170,6 +189,8 @@ class NN:
 
             # Train each of the shuffled batches
             for i in range(len(data_batches)):
+                if self.testMode == True and i%10 == 0:
+                    print("\tEpoch:%d" % (i))
                 self.train_single(data_batches[rand[i]], label_batches[rand[i]])
 
             # Logging for testing purposes only
@@ -183,6 +204,7 @@ class NN:
                     input = forward_pass_result[-1]
                 test_prediction = forward_pass_result[-1].argmax(axis=-1)
                 log.append(np.mean(test_prediction == test_label))
+                # log.append(np.mean([self.label_dict[x] for x in test_prediction] == test_label))
 
         # Output for testing purposes only
         if self.testMode == True:
@@ -191,23 +213,24 @@ class NN:
 
     # Initialize the hyperparameters then start training
     def start_train(self, epochs, layers, b_size, rate):
+        if self.testMode == True:
+            print("Initialize hyperparameters")
         self.hyper_param_init(layers, rate, b_size, epochs)
+
         if self.testMode == True:
             print("Training with Rate=%f B_size=%d Epochs=%d" % (self.rate, self.b_size, self.epochs))
         return self.train(self.train_image, self.train_label, self.test_image, self.test_label)
 
 def main(argv):
     # Read all the input files, have default value just in case
-    testMode = False
-    files = ["train_image.csv", "train_label.csv", "test_image.csv"]
-    if len(argv) == 3 :
-        files = argv
+    testMode = True
+    files = ["fma_small_img", "genres_small.csv"]
 
     # The neural network layers
     layers = [
-        [784, 200, False],
+        [25000, 17000, False],
         [-1, -1, True],
-        [200, 10, False]
+        [17000, 8, False]
     ]
 
     # Testing purposes only
@@ -218,8 +241,9 @@ def main(argv):
         for i in range(1):
             start = time.time()
             print("********************************")
+            print("Training Start")
 
-            log = MLP.start_train(75, layers, 25, 0.2)
+            log = MLP.start_train(10, layers, 25, 0.1)
 
             print("Training Complete, time elapsed: " + str(time.time() - start))
             print("********************************\n")
