@@ -5,9 +5,11 @@ import matplotlib.pyplot as plt
 import random
 from PIL import Image
 import os
+from numba import jit, cuda
 
 # Layer class that represent each layer in the neural network
 class Layer:
+    
     def __init__(self, input_size, output_size, rate, relu):
         self.relu = relu
         if self.relu == True:
@@ -19,10 +21,20 @@ class Layer:
 
             scale = np.sqrt(2/(input_size + output_size))
             self.weight = np.zeros((input_size, output_size))
-            for i in range(input_size):
-                for j in range(output_size):
-                    self.weight[i][j] = np.random.normal(0.0, scale)    
+            self.assign_weights(scale, input_size, output_size)
+            # self.weight = np.zeros((input_size, output_size))
+            # for i in range(input_size):
+            #     for j in range(output_size):
+            #         self.weight[i][j] = np.random.normal(0.0, scale) 
 
+    # @jit
+    def assign_weights(self, scale, input_size, output_size):
+        for i in range(input_size):
+            for j in range(output_size):
+                self.weight[i][j] = np.random.normal(0.0, scale) 
+
+
+    @jit
     def forward_single(self, input):
         if self.relu == True:
             return np.maximum(0, input)
@@ -32,6 +44,7 @@ class Layer:
         weightedSum += self.bias
         return weightedSum
 
+    @jit
     def backward_single(self, input, grad_out):
         if self.relu == True:
             return grad_out * (input > 0)
@@ -92,8 +105,7 @@ class NN:
                 if(filepath.endswith("png")):
                     # print(filepath)
                     filename = img_file[:-4]
-                    # img = Image.open(filepath).convert('L').resize((150,60))
-                    img = Image.open(filepath).convert('L')
+                    img = Image.open(filepath).convert('L').resize((150,60))
                     # img = [int(i)/255.0 for i in img]
                     np_img = np.asarray(img).flatten()
                     np_img = np.array([int(i)/255.0 for i in np_img])
@@ -128,6 +140,7 @@ class NN:
         return train_image, train_label, test_image, test_label
 
     # Loss function based on log-softmax
+    @jit
     def loss_func(self, output, labels):
         loss = output[np.arange(len(output)), labels]
         loss = np.log(np.sum(np.exp(output), axis=-1)) - loss
@@ -190,7 +203,7 @@ class NN:
 
         # Go through each epoch
         for e in range(self.epochs):
-            if self.testMode == True and e%10 == 0:
+            if self.testMode == True:
                 print("Epoch : %i" % (e))
             # Randomly "shuffle" the train data
             rand = list(range(len(data_batches)))
@@ -236,36 +249,10 @@ def main(argv):
     files = ["fma_small_img", "genres_small.csv"]
 
     # The neural network layers
-    # 50x20
-    # layers = [
-    #     [1000, 700, False],
-    #     [-1, -1, True],
-    #     [700, 450, False],
-    #     [-1, -1, True],
-    #     [450, 8, False]
-    # ]
-
-    # 100x40
-    # layers = [
-    #     [4000, 2700, False],
-    #     [-1, -1, True],
-    #     [2700, 1800, False],
-    #     [-1, -1, True],
-    #     [1800, 8, False]
-    # ]
-
-    #150x60
-    # layers = [
-    #     [9000, 6000, False],
-    #     [-1, -1, True],
-    #     [6000, 8, False]
-    # ]
-
-    #250x100
     layers = [
-        [25000, 16000, False],
+        [9000, 6000, False],
         [-1, -1, True],
-        [16000, 8, False]
+        [6000, 8, False]
     ]
 
     # Testing purposes only
@@ -278,7 +265,7 @@ def main(argv):
             print("********************************")
             print("Training Start")
 
-            log = MLP.start_train(150, layers, 25, 0.01)
+            log = MLP.start_train(50, layers, 10, 0.1)
 
             print("Training Complete, time elapsed: " + str(time.time() - start))
             print("********************************\n")
